@@ -42,13 +42,14 @@ def lex(code):
 
     return tokens
 
-code = """
-language MyLang {
-    keywords { say let }
-}
-"""
+if __name__ == "__main__":
+    code = """
+    language MyLang {
+        keywords { say let }
+    }
+    """
 
-tokens = lex(code)
+    tokens = lex(code)
 
-for t in tokens:
-    print(t)
+    for t in tokens:
+        print(t)
