@@ -14,7 +14,7 @@ class Token:
         self.value = value
 
     def __repr__(self):
-        return f"{self.type}({self.value})"
+        return f"{self.type}({self.value})" if self.type == "IDENTIFIER" else self.type
 
 
 def lex(code):
@@ -32,7 +32,8 @@ def lex(code):
                 value = match.group(0)
 
                 if token_type != "SKIP":
-                    tokens.append(Token(token_type, value))
+                    token_value = value if token_type == "IDENTIFIER" else None
+                    tokens.append(Token(token_type, token_value))
 
                 i = match.end()
                 break
