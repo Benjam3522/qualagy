@@ -38,6 +38,7 @@ TOKEN_SPEC = [
 ]
 
 KEYWORDS = {
+    "var": "VAR",
     "run": "RUN",
     "visibility": "VISIBILITY",
     "import": "IMPORT",
@@ -104,14 +105,3 @@ def lex(code):
             raise SyntaxError(f"Unexpected character: {code[i]}")
 
     return tokens
-
-
-if __name__ == "__main__":
-    code = """
-    
-    """
-
-    tokens = lex(code)
-
-    for token in tokens:
-        print(token)
