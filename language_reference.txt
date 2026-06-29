@@ -1,0 +1,115 @@
+Qualagy Language Reference
+==========================
+
+This file lists the commands that are actually implemented and useful in the current version.
+
+Implemented commands
+-------------------
+
+1. Variable declaration
+Syntax:
+var name = value;
+
+Example:
+var x = 5;
+
+2. Variable reassignment
+Syntax:
+set name = value;
+
+Example:
+var x = 1;
+set x = 10;
+
+3. Alternative reassignment keyword
+Syntax:
+change name = value;
+
+Example:
+change x = 10;
+
+4. Output
+Syntax:
+log.write(value1, value2, ...);
+
+Example:
+log.write("hello");
+log.write("value: ", x);
+
+5. If statements
+Syntax:
+if condition {
+    ...
+}
+else {
+    ...
+}
+
+Example:
+if x > 10 {
+    log.write("greater")
+}
+else {
+    log.write("smaller")
+}
+
+6. While loops
+Syntax:
+while condition {
+    ...
+}
+
+Example:
+while x < 10 {
+    log.write(x)
+    set x = x + 1
+}
+
+7. Functions
+Syntax:
+function name(param1, param2) {
+    return value
+}
+
+Example:
+function add(a, b) {
+    return a + b
+}
+
+8. Function calls
+Syntax:
+name(arg1, arg2)
+
+Example:
+var result = add(2, 3)
+
+9. Random values
+Syntax:
+random(low, high)
+
+Example:
+var r = random(1, 10)
+
+11. Comments
+Syntax:
+// this is a comment
+
+Useful but optional commands
+----------------------------
+
+- run: currently only a stub-like built-in. It is not very useful yet unless you plan to make it execute files or functions.
+- import: currently only a placeholder. It is not very useful yet unless you add real module loading.
+
+Operators
+---------
+
+Arithmetic:
++ - * / %
+
+Comparison:
+== != > >= < <=
+
+Literals:
+- strings: "hello"
+- booleans: true, false
+- null: null

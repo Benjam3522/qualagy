@@ -230,6 +230,9 @@ class Parser:
         if token.type == "SET":
             return self.set_statement()
 
+        if token.type == "CHANGE":
+            return self.change_statement()
+
         if token.type == "WRITE":
             return self.write_statement()
 
@@ -335,10 +338,18 @@ class Parser:
     def run_statement(self):
         self.expect("RUN")
         if self.peek() and self.peek().type == "LPAREN":
-            call = self.call(Identifier("run"))
+            args = []
+            self.expect("LPAREN")
+            if self.peek() and self.peek().type != "RPAREN":
+                args.append(self.expression())
+                while self.peek() and self.peek().type == "COMMA":
+                    self.advance()
+                    args.append(self.expression())
+            self.expect("RPAREN")
             if self.peek() and self.peek().type == "SEMICOLON":
                 self.advance()
-            return SimpleStmt(call)
+            return SimpleStmt(Call(Identifier("run"), args))
+
         expr = self.expression()
         if self.peek() and self.peek().type == "SEMICOLON":
             self.advance()
@@ -357,6 +368,15 @@ class Parser:
 
     def set_statement(self):
         self.expect("SET")
+        name = self.expect("IDENTIFIER").value
+        self.expect("ASSIGN")
+        value = self.expression()
+        if self.peek() and self.peek().type == "SEMICOLON":
+            self.advance()
+        return SetStmt(name, value)
+
+    def change_statement(self):
+        self.expect("CHANGE")
         name = self.expect("IDENTIFIER").value
         self.expect("ASSIGN")
         value = self.expression()

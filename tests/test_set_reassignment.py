@@ -66,6 +66,26 @@ class SetReassignmentTests(unittest.TestCase):
         self.assertGreaterEqual(interpreter.variables["r"], 2)
         self.assertLessEqual(interpreter.variables["r"], 5)
 
+    def test_change_is_alias_for_set(self):
+        code = 'var x = 1; change x = 10;'
+        tokens = lex(code)
+        ast = Parser(tokens).parse()
+
+        interpreter = Interpreter()
+        interpreter.execute(ast)
+
+        self.assertEqual(interpreter.variables["x"], 10.0)
+
+    def test_get_builtin_reads_existing_variable(self):
+        code = 'var x = 7; var y = get("x");'
+        tokens = lex(code)
+        ast = Parser(tokens).parse()
+
+        interpreter = Interpreter()
+        interpreter.execute(ast)
+
+        self.assertEqual(interpreter.variables["y"], 7.0)
+
 
 if __name__ == "__main__":
     unittest.main()

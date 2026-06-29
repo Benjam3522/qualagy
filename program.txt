@@ -1,5 +1,6 @@
 var x = random(1,20)
 
+function checkNum() {
 if x > 10 {
     log.write("x is greater than 10")
     log.write("x was ", x)
@@ -9,3 +10,6 @@ elif x < 10{
     log.write("x was ", x)
 }
 else log.write("x is 10")
+}
+
+run checkNum()
