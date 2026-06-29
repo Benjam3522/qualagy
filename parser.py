@@ -27,6 +27,15 @@ class Identifier(ASTNode):
         return f"Identifier({self.name})"
 
 
+class MemberAccess(ASTNode):
+    def __init__(self, object_, member):
+        self.object = object_
+        self.member = member
+
+    def __repr__(self):
+        return f"MemberAccess({self.object}, {self.member})"
+
+
 class BinaryOp(ASTNode):
     def __init__(self, op, left, right):
         self.op = op
@@ -145,6 +154,15 @@ class Assign(ASTNode):
 
     def __repr__(self):
         return f"Assign({self.name}, {self.value})"
+
+
+class SetStmt(ASTNode):
+    def __init__(self, name, value):
+        self.name = name
+        self.value = value
+
+    def __repr__(self):
+        return f"SetStmt({self.name}, {self.value})"
 
 
 class Parser:
@@ -344,7 +362,7 @@ class Parser:
         value = self.expression()
         if self.peek() and self.peek().type == "SEMICOLON":
             self.advance()
-        return Assign(name, value)
+        return SetStmt(name, value)
 
     def write_statement(self):
         self.expect("WRITE")
@@ -412,10 +430,16 @@ class Parser:
         if token.type == "STRING":
             return String(token.value)
         if token.type == "IDENTIFIER":
-            # function call?
+            expr = Identifier(token.value)
+
+            while self.peek() and self.peek().type == "DOT":
+                self.advance()
+                member = self.expect("IDENTIFIER").value
+                expr = MemberAccess(expr, Identifier(member))
+
             if self.peek() and self.peek().type == "LPAREN":
-                return self.call(Identifier(token.value))
-            return Identifier(token.value)
+                return self.call(expr)
+            return expr
         if token.type == "TRUE":
             return Boolean(True)
         if token.type == "FALSE":

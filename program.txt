@@ -1,0 +1,11 @@
+var x = random(1,20)
+
+if x > 10 {
+    log.write("x is greater than 10")
+    log.write("x was ", x)
+}
+elif x < 10{
+    log.write("x is less than 10")
+    log.write("x was ", x)
+}
+else log.write("x is 10")

@@ -1,3 +1,6 @@
+import random
+
+
 class Interpreter:
     def __init__(self):
         self.variables = {}
@@ -50,11 +53,22 @@ class Interpreter:
         value = self.visit(node.value)
         self.variables[node.name] = value
 
+    def visit_SetStmt(self, node):
+        if node.name not in self.variables:
+            raise RuntimeError(
+                f"Variable '{node.name}' does not exist."
+            )
+
+        value = self.visit(node.value)
+        self.variables[node.name] = value
+
     def visit_BinaryOp(self, node):
         left = self.visit(node.left)
         right = self.visit(node.right)
 
         if node.op == "PLUS":
+            if isinstance(left, str) or isinstance(right, str):
+                return str(left) + str(right)
             return left + right
 
         if node.op == "MINUS":
@@ -120,18 +134,37 @@ class Interpreter:
         while self.visit(node.condition):
             self.visit(node.body)
 
+    def visit_MemberAccess(self, node):
+        object_name = getattr(getattr(node, "object", None), "name", None)
+        member_name = getattr(getattr(node, "member", None), "name", None)
+
+        if object_name == "log" and member_name == "write":
+            return "log.write"
+
+        raise RuntimeError(
+            f"Unknown member access: {object_name}.{member_name}"
+        )
+
     def visit_Call(self, node):
-        if getattr(node.callee, "name", None) == "write":
+        callee_name = getattr(getattr(node, "callee", None), "name", None)
+        callee_type = type(getattr(node, "callee", None)).__name__
+
+        if callee_name == "write" or callee_name == "log.write" or callee_type == "MemberAccess":
             values = []
 
             for arg in node.args:
-                values.append(
-                    str(self.visit(arg))
-                )
+                values.append(str(self.visit(arg)))
 
-            print(*values)
-
+            print("".join(values))
             return None
+
+        if callee_name == "random":
+            if len(node.args) != 2:
+                raise RuntimeError("random expects exactly two arguments")
+
+            low = int(self.visit(node.args[0]))
+            high = int(self.visit(node.args[1]))
+            return random.randint(low, high)
 
         raise RuntimeError(
             f"Unknown function: {node.callee.name}"
